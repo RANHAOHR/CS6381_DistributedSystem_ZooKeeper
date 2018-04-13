@@ -32,13 +32,9 @@ class Proxy:
     def __init__(self):
         # Use XPUB/XSUB to get multiple contents from different publishers
         self.context = zmq.Context()
-        self.current_pub = "tcp://*:5555" # the default addr
-        self.current_sub = "tcp://*:5556"
         self.xsubsocket = self.context.socket(zmq.XSUB)
-        # self.xsubsocket.bind(self.current_pub)
         self.xpubsocket = self.context.socket (zmq.XPUB)
         self.xpubsocket.setsockopt(zmq.XPUB_VERBOSE, 1)
-        # self.xpubsocket.bind (self.current_sub)
         self.xpubsocket.send_multipart([b'\x01', b'10001'])
         # Now we are going to create a poller
         self.poller = zmq.Poller ()
