@@ -25,4 +25,5 @@ Ran Hao (rxh349@case.edu) Xiaodong Yang (xiaodong.yang@vanderbilt.edu)
 
 ## When running additional subscribers, if want to receive HISTORY massage, run:
 `python subscriber.py "zipnode(default 10001)" "address of the broker node" "port(for receiving HISTORY)"`
+- We assign a different port for the newly registered subscriber to get the history messages, this is to aviod the XPUB send the hsitory message to all subscribers while only the new subscriber requires the history
 - In the zookeeper server, press `Enter` to send the HISTORY and start the communication. Please wait until "Sent HISTORY" message shows to send history to the next subscriber

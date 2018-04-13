@@ -49,12 +49,12 @@ class Proxy:
         self.topicInd = 0
         self.zip_list = [] #the ziplist to keep track with the zipcodes received
 
-        self.zk_object = KazooClient(hosts='127.0.0.1:2181') #or to make it multiple zookeepers.....
+        self.zk_object = KazooClient(hosts='127.0.0.1:2181') 
         self.zk_object.start()
 
         self.path = '/home/'
 
-        znode1 = self.path + "poller"
+        znode1 = self.path + "broker1"
         if self.zk_object.exists(znode1):
             pass
         else:
@@ -64,7 +64,7 @@ class Proxy:
             self.zk_object.create(znode1, "5555,5556")
             # Print the version of a node and its data
 
-        znode2 = self.path + "poller2"
+        znode2 = self.path + "broker2"
         if self.zk_object.exists(znode2):
             pass
         else:
@@ -73,7 +73,7 @@ class Proxy:
             # Create a node with data
             self.zk_object.create(znode2, "5557,5558" )
 
-        znode3 = self.path + "poller3"
+        znode3 = self.path + "broker3"
         if self.zk_object.exists(znode3):
             pass
         else:
@@ -84,7 +84,7 @@ class Proxy:
 
         self.election = self.zk_object.Election(self.path,"leader")
         leader_list = self.election.contenders()
-        self.leader = leader_list[-1].encode('latin-1')
+        self.leader = leader_list[-1].encode('latin-1') # the leader here is a pair of address
 
         address = self.leader.split(",")
         pub_addr = "tcp://*:"+ address[0]
@@ -93,7 +93,7 @@ class Proxy:
         self.xsubsocket.bind(pub_addr)
         self.xpubsocket.bind(sub_addr)
 
-        self.watch_dir = self.path + self.leader
+        self.watch_dir = self.path + self.leader #use  Datawatch
 
         self.leader_path = "/leader/"
         self.leader_node = self.leader_path + "node"
@@ -162,7 +162,6 @@ class Proxy:
                 #start to collect the msg for the new topic
                 topic_msg, histry_msg, ownership, strengh_vec = self.scheduleInTopic(self.topic_info_queue[self.topicInd], msg)
                 self.topicInd +=1
-
             else :
                 zipInd = self.zip_list.index(zipcode)
                 topic_msg, histry_msg, ownership, strengh_vec = self.scheduleInTopic(self.topic_info_queue[zipInd], msg)
